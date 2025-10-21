@@ -1,0 +1,4 @@
+aiosmtplib
+colorama
+loguru
+python-decouple
