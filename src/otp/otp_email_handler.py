@@ -93,7 +93,7 @@ class OtpEmailHandler:
     @logger.catch
     async def send_otp_email(
         self,
-        to_adress: List[str] | str,
+        to_adress: str,
         subject: str, 
         otp_code: str | None = None,
         expiry_minutes: int = 10
@@ -104,7 +104,7 @@ class OtpEmailHandler:
         using HTML template (if available) or plain text as fallback.
         
         Args:
-            to_adress: Email address(es) of the recipient(s).
+            to_adress: Email address of the recipient.
             subject: Email subject line.
             otp_code: Specific OTP code. If None, will be generated automatically.
             expiry_minutes: Code expiration time in minutes. Default is 10.

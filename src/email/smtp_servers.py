@@ -1,4 +1,5 @@
 from enum import Enum
+from dataclasses import dataclass
 
 
 class SMTPServer(Enum):
@@ -14,3 +15,11 @@ class SMTPServer(Enum):
     @property
     def port(self) -> int:
         return 587
+
+@dataclass
+class SmtpServerConfig:
+    server: str
+    port: int
+
+    def __str__(self) -> str:
+        return self.server

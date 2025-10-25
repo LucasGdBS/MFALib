@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import aiosmtplib
 from loguru import logger
 
-from src.email.smtp_servers import SMTPServer
+from src.email.smtp_servers import SMTPServer, SmtpServerConfig
 
 @dataclass
 class EmailBody:
@@ -20,7 +20,7 @@ class SmtpEmailSender:
     Supports both single and multiple recipients.
     """
     
-    def __init__(self, smtp_server: SMTPServer, username: str, password: str):
+    def __init__(self, smtp_server: SMTPServer | SmtpServerConfig, username: str, password: str):
         """
         Initialize the SMTP email sender.
         
@@ -29,7 +29,7 @@ class SmtpEmailSender:
             username: Email account username/address
             password: Email account password or app-specific password
         """
-        self.smtp_server = smtp_server
+        self.smtp_server = str(smtp_server)
         self.smtp_port = smtp_server.port
         self.username = username
         self.password = password
@@ -63,7 +63,7 @@ class SmtpEmailSender:
         try: 
             await aiosmtplib.send(
                 msg,
-                hostname=self.smtp_server.value,
+                hostname=self.smtp_server,
                 port=self.smtp_port,
                 username=self.username,
                 password=self.password,
