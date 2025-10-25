@@ -2,3 +2,5 @@ aiosmtplib
 colorama
 loguru
 python-decouple
+pyotp
+qrcode
