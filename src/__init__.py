@@ -44,7 +44,7 @@ Version: 0.0.1
 """
 
 from .email.email_sender import SmtpEmailSender, EmailBody
-from .email.smtp_servers import SMTPServer
+from .email.smtp_servers import SMTPServer, SmtpServerConfig
 from .otp.otp_email_handler import OtpEmailHandler
 from .otp.totp_handler import TOTPHandler
 
@@ -57,6 +57,7 @@ __all__ = [
     "OtpEmailHandler",
     "TOTPHandler",
     "EmailBody",
+    "SmtpServerConfig",
     "__version__",
     "__description__",
 ]
