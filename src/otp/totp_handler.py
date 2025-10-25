@@ -4,12 +4,12 @@ from loguru import logger
 import pyotp
 import qrcode
 
-class OTPHandler:
+class TOTPHandler:
     def __init__(self, secret_key: str):
         self.totp = pyotp.TOTP(secret_key)
 
     @logger.catch
-    def generate_otp_qrcode(self, user_identifier: str, app_name: str, ascii: bool = False) -> BytesIO | None:
+    def generate_totp_qrcode(self, user_identifier: str, app_name: str, ascii: bool = False) -> BytesIO | None:
         """
         Generate a QR code for OTP (TOTP) setup and either print an ASCII representation
         or return a PNG image buffer suitable for embedding or saving.
@@ -51,20 +51,20 @@ class OTPHandler:
             return buffer
 
     @logger.catch
-    def verify_otp(self, otp_code: str) -> bool:
+    def verify_totp(self, otp_code: str) -> bool:
         """
-        Verify the provided OTP code.
+        Verify the provided TOTP code.
 
         Args:
-            otp_code (str): The OTP code to verify.
+            otp_code (str): The TOTP code to verify.
 
         Returns:
-            bool: True if the OTP code is valid, False otherwise.
+            bool: True if the TOTP code is valid, False otherwise.
         """
         return self.totp.verify(otp_code)
 
 def generate_secret_key(length:int=32) -> str:
-    """Generate a random base32 secret key for OTP.
+    """Generate a random base32 secret key for TOTP.
 
     Args:
         length (int): Length of the secret key. Default is 32.

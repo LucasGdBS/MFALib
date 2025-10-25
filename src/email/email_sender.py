@@ -1,10 +1,16 @@
 from email.message import EmailMessage
 from typing import List
+from dataclasses import dataclass
 
 import aiosmtplib
 from loguru import logger
 
-from smtp_servers import SMTPServer
+from src.email.smtp_servers import SMTPServer
+
+@dataclass
+class EmailBody:
+    text: str
+    subtype: str
 
 class SmtpEmailSender:
     """
@@ -28,7 +34,7 @@ class SmtpEmailSender:
         self.username = username
         self.password = password
 
-    async def send_email(self, to_address: List[str] | str, subject: str, body: str) -> None:
+    async def send_email(self, to_address: List[str] | str, subject: str, body: EmailBody | str) -> None:
         """
         Send an email asynchronously.
         
@@ -46,7 +52,13 @@ class SmtpEmailSender:
         msg['From'] = self.username
         msg['To'] = ", ".join(to_address)
         msg['Subject'] = subject
-        msg.set_content(body)
+
+        if isinstance(body, EmailBody) and body.subtype.lower() == "html":
+            msg.set_content("Seu cliente de email não suporta HTML")
+            msg.add_alternative(body.text, subtype="html")
+        else:
+            msg.set_content(body if isinstance(body, str) else body.text)
+
 
         try: 
             await aiosmtplib.send(
@@ -57,7 +69,7 @@ class SmtpEmailSender:
                 password=self.password,
                 start_tls=True
             )
-            logger.info(f"Email sent to {to_address} with subject '{subject}'")
+            logger.debug(f"Email sent to {to_address} with subject '{subject}'")
         except Exception as e:
             logger.error(f"Failed to send email: {e}")
             raise

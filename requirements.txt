@@ -4,3 +4,4 @@ loguru
 python-decouple
 pyotp
 qrcode
+jinja2
