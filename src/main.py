@@ -20,7 +20,7 @@ async def exemplo_mfa_completo():
     )
 
     otp_code = await email_handler.send_otp_email(
-        to_adress='lucas_gabrielbrito@hotmail.com',
+        to_adress= env('LOGIN_GMAIL'),
         subject='Código de Verificação - MeuApp'
     )
     print(f"Código OTP enviado: {otp_code}")
@@ -48,11 +48,13 @@ async def exemplo_mfa_completo():
     )
 
     # Verificar código TOTP
-    codigo_totp = input("Digite o código do seu app authenticator: ")
-    if totp_handler.verify_totp(codigo_totp):
-        print("✅ Código TOTP válido! MFA completo com sucesso!")
-    else:
-        print("❌ Código TOTP inválido!")
+    while True: 
+        codigo_totp = input("Digite o código do seu app authenticator: ")
+        if totp_handler.verify_totp(codigo_totp):
+            print("✅ Código TOTP válido! MFA completo com sucesso!")
+            break
+        else:
+            print("❌ Código TOTP inválido!")
 
 # Executar exemplo
 asyncio.run(exemplo_mfa_completo())
