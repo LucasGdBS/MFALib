@@ -28,7 +28,6 @@ async def exemplo_opt():
     print(f"Código OTP enviado: {otp_code}")
 
     # Simular verificação do código OTP
-
     while True:
         codigo_inserido = input("Digite o código recebido por email: ")
         if codigo_inserido == otp_code:
@@ -60,31 +59,45 @@ async def exemplo_totp():
         else:
             print("❌ Código TOTP inválido!")
 
-
 async def exemplo_jwt():
-    print("\n🔑 Exemplo de Autenticação JWT Isolada")
+    print("\n🔑 Exemplo de Autenticação JWT com permissão")
 
-    # Gerar toker
-    print("\n🕐 Gerando token JWT...")
-    user_data = {"user_id": 1, "email": env('LOGIN_GMAIL') }
+    email_env = env("LOGIN_GMAIL")
 
-    token = JWTHandler.create_token(user_data)
-    print(f"✅ Token JWT gerado:\n{token}")
+    flag = True
 
-    # Decodificar token 
-    print("\n🕐 Decodificando token JWT...")
-    try:
-        decoded = JWTHandler.decode_token(token)
-        print("Payload decodificado:")
-        for key, value in decoded.items():
-            print(f"   • {key}: {value}")
-    except JWTException as e:
-        print(f"❌ Erro ao validar token: {str(e)}")
+    while flag:
+        print(f"\nE-mail selecionado: {email_env}")
 
+        # escolher o papel
+        print("\nEscolha o papel (role) do usuário:")
+        print("   • admin     → pode ler, escrever e gerenciar permissões")
+        print("   • escritor  → pode ler e escrever")
+        print("   • leitor    → pode apenas ler")
+        role = input("\nPapel (role): ").strip().lower()
+
+        if role not in ["admin", "escritor", "leitor"]:
+            print("⚠️ Papel inválido! Digite apenas admin, escritor ou leitor.")
+            continue
+
+        token = JWTHandler.create_token(user_id= 1, email=email_env, role=role)
+        print(f"\n✅ Token JWT gerado para {email_env} com o papel '{role}':\n{token}")
+
+        # Decodificar token 
+        print("\n🕐 Decodificando token JWT...")
+        try:
+            decoded = JWTHandler.decode_token(token)
+            print("Payload decodificado:")
+            for key, value in decoded.items():
+                print(f"   • {key}: {value}")
+            flag = False
+        except JWTException as e:
+            print(f"❌ Erro ao decodificar token: {str(e)}")
+    
 
 async def main():
     while(True):
-        print("\nSistema de Teste de Autenticação")
+        print("\n##### Sistema de Teste de Autenticação ######")
         print("Digite 1: Testar OPT")
         print("Digite 2: Testar TOTP")
         print("Digite 3: Testar JWT")
@@ -101,8 +114,7 @@ async def main():
         else:
             print("👋 Encerrando execução...")
             break
-
-
+        
 if __name__ == "__main__":
     asyncio.run(main())
 
