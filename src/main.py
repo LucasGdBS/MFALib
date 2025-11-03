@@ -5,6 +5,8 @@ from src.otp.otp_email_handler import OtpEmailHandler
 from src.otp.totp_handler import TOTPHandler, generate_secret_key
 from src.email.email_sender import SmtpEmailSender
 from src.email.smtp_servers import SMTPServer
+from src.jwt.jwt_handler import JWTHandler
+from src.jwt.jwt_exceptions import JWTException
 
 async def exemplo_mfa_completo():
     print("🔐 Exemplo de MFA Completo")
@@ -56,5 +58,44 @@ async def exemplo_mfa_completo():
         else:
             print("❌ Código TOTP inválido!")
 
-# Executar exemplo
-asyncio.run(exemplo_mfa_completo())
+
+async def exemplo_jwt():
+    print("\n🔑 Exemplo de Autenticação JWT Isolada")
+
+    # Gerar toker
+    print("\n🕐 Gerando token JWT...")
+    user_data = {"user_id": 1, "email": env('LOGIN_GMAIL') }
+
+    token = JWTHandler.create_token(user_data)
+    print(f"✅ Token JWT gerado:\n{token}")
+
+    # Decodificar token 
+    print("\n🕐 Decodificando token JWT...")
+    try:
+        decoded = JWTHandler.decode_token(token)
+        print("Payload decodificado:")
+        for key, value in decoded.items():
+            print(f"   • {key}: {value}")
+    except JWTException as e:
+        print(f"❌ Erro ao validar token: {str(e)}")
+
+
+async def main():
+    print("\nSistema de Teste de Autenticação")
+    print("Digite 1: Testar MFA")
+    print("Digite 2: Testar JWT")
+    print("Digite 0: Sair")
+
+    escolha = input("\nEscolha uma opção: ")
+
+    if escolha == "1":
+        await exemplo_mfa_completo()
+    elif escolha == "2":
+        await exemplo_jwt()
+    else:
+        print("👋 Encerrando execução...")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
