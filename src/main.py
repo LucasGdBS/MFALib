@@ -8,7 +8,7 @@ from src.email.smtp_servers import SMTPServer
 from src.jwt.jwt_handler import JWTHandler
 from src.jwt.jwt_exceptions import JWTException
 
-async def exemplo_mfa_completo():
+async def exemplo_opt():
     print("🔐 Exemplo de MFA Completo")
 
     # 1. OTP via Email
@@ -28,14 +28,16 @@ async def exemplo_mfa_completo():
     print(f"Código OTP enviado: {otp_code}")
 
     # Simular verificação do código OTP
+
     while True:
         codigo_inserido = input("Digite o código recebido por email: ")
         if codigo_inserido == otp_code:
-            print("✅ Código OTP correto! Prosseguindo...")
+            print("✅ Código OTP correto!")
             break
         else:
             print("❌ Código OTP incorreto. Tente novamente.")
 
+async def exemplo_totp():
     # 2. TOTP Setup
     print("\n🕐 Configurando TOTP...")
     secret_key = generate_secret_key()
@@ -53,7 +55,7 @@ async def exemplo_mfa_completo():
     while True: 
         codigo_totp = input("Digite o código do seu app authenticator: ")
         if totp_handler.verify_totp(codigo_totp):
-            print("✅ Código TOTP válido! MFA completo com sucesso!")
+            print("✅ Código TOTP válido!")
             break
         else:
             print("❌ Código TOTP inválido!")
@@ -81,19 +83,24 @@ async def exemplo_jwt():
 
 
 async def main():
-    print("\nSistema de Teste de Autenticação")
-    print("Digite 1: Testar MFA")
-    print("Digite 2: Testar JWT")
-    print("Digite 0: Sair")
+    while(True):
+        print("\nSistema de Teste de Autenticação")
+        print("Digite 1: Testar OPT")
+        print("Digite 2: Testar TOTP")
+        print("Digite 3: Testar JWT")
+        print("Digite 0: Sair")
 
-    escolha = input("\nEscolha uma opção: ")
-
-    if escolha == "1":
-        await exemplo_mfa_completo()
-    elif escolha == "2":
-        await exemplo_jwt()
-    else:
-        print("👋 Encerrando execução...")
+        escolha = input("\nEscolha uma opção: ")
+    
+        if escolha == "1":
+            await exemplo_opt()
+        elif escolha == "2":
+            await exemplo_totp()
+        elif escolha == "3":
+            await exemplo_jwt()
+        else:
+            print("👋 Encerrando execução...")
+            break
 
 
 if __name__ == "__main__":
